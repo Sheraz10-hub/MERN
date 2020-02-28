@@ -1,15 +1,19 @@
 const express = require('express');
 
+// require the module(or function) which is created in db.js file
+const connectDB = require('./config/db');
+
 const app = express();
+
+// connect database (calling async function which is created in db.js file)
+connectDB();
 
 app.get('/', (req, res) => {
     res.send("API Running")
 })
 
-// process is looking for enviroment port. because when we diploy it to heroKU than its takes their port. 
-const PORT = process.env.PORT || 5000 // when env veriabel is set its going to 5000
+const PORT = process.env.PORT || 5000 
 
-// we are calling callback function. beacuse we want something when its connects.
 app.listen(PORT, () => {
     console.log(`Server starting at Port ${PORT}`);
 });
