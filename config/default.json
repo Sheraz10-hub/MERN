@@ -1,3 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://sheraz123:sheraz123@devconnnector-rssda.mongodb.net/test?retryWrites=true&w=majority"
+    "mongoURI": "mongodb+srv://sheraz123:sheraz123@devconnnector-rssda.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret": "mysecrettoken"
 }
