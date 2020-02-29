@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken'); // new
-const config = require('config');   // new    =>for geting token which is in default.json
+const jwt = require('jsonwebtoken'); 
+const config = require('config');  
 const { check, validationResult} = require('express-validator');
 
 const User = require('../../models/User')
@@ -26,7 +26,7 @@ async (req, res) => {
     const { name, email, password } = req.body;
     try {
     // see if user exists
-    let user = await User.findOne({ email }); // findOne is the query in Mongodb
+    let user = await User.findOne({ email }); 
     if(user) {
         res.status(400).json({ errors: [{ msg: "User already exist "}] });
     }
@@ -38,7 +38,7 @@ async (req, res) => {
         d: 'mm'
     }) 
     // creating an instance of user
-    user = new User({ // and passing with object of field that we want 
+    user = new User({
         name,
         email,
         avatar,
@@ -49,20 +49,18 @@ async (req, res) => {
     user.password = await bcrypt.hash(password, salt)
     await user.save();
 
-    // Return Jsonwebtoken  if any issue check to Noteone Step 9     
+    // Return Jsonwebtoken    
     const payload = {
         user: {
             id: user.id
         }
     }
-
     jwt.sign(
         payload, 
         config.get('jwtSecret'),
         { expiresIn: 360000 },
         (err, token) => {
             if(err) throw err;
-            // res.json which will give us 200 response
             res.json({ token });
         }
     );
