@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
+
 const ProfileSchema = new mongoose.Schema({
-    // we want to create a reference to the user model
-    // Because every Profile is associated with the user.
     user: {
-        type: mongoose.Schema.Types.ObjectId, // type is objectid because we connect it to user id
-        ref: 'user' // ref to user model
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'user' 
     },
     company: {
         type : String
@@ -15,7 +14,7 @@ const ProfileSchema = new mongoose.Schema({
     location: {
         type: String
     },
-    status: { // etc: developer, student, instructor etc
+    status: { 
         type: String,
         require: true
     },
@@ -29,7 +28,7 @@ const ProfileSchema = new mongoose.Schema({
     githubusername: {
         type: String
     },
-    experience: [ // experience is the array of other fields, etc past jobs
+    experience: [
         {
             title:{
                 type: String,
@@ -49,7 +48,7 @@ const ProfileSchema = new mongoose.Schema({
             to: {
                 type: Date
             },
-            current: { // check the current checkbox still it'll disable to field.
+            current: {
                 type: Boolean,
                 default: false
             },
@@ -58,7 +57,7 @@ const ProfileSchema = new mongoose.Schema({
             }
         }
     ],
-    education: [ // array of object
+    education: [
         {
             school: {
                 type: String,
