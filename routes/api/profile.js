@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth')
-const { check , validationResult } = require('express-validator/check')  // this is a post request so its takes data
+const { check , validationResult } = require('express-validator')  // this is a post request so its takes data
 const Profile = require('../../models/Profile')
 const User = require('../../models/User')
 
@@ -107,8 +107,49 @@ router.post('/',
             console.error(err.message);
             res.status(500).send('Server Error')
         }
-        res.send('Hello')
     }
-)
+);
 
+
+// @route    GET api/profile
+// @desc     Get All profile
+// @access   Private
+
+router.get('/', async (req, res) => {
+    try {
+        // we also want to add name and avatar which is the part of user model
+        // so we use dot populate 1st parameter: user collection, 2nd parameter: array of field that we want 
+        const profiles = await Profile.find().populate('user', ['name','avatar']);
+        res.send(profiles);
+    } catch (err) {
+        console.error(err.message)
+        res.status(500).send("Server Error")
+    }
+})
+
+
+// @route    GET api/profile/user/:user_id     //   :user_id is the place holder
+// @desc     Get profile by user ID
+// @access   public
+
+router.get('/user/:user_id', async (req, res) => {
+    try {
+        // params are parameters whose values are set dynamically
+        const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
+       
+        if(!profile) {
+            return res.status(400).json({ msg: "Profile not found "})
+        };
+
+        res.json(profile);
+    } catch (err) {
+        console.error(err.message)
+        // in err kind is the property 
+        // when search for id but its digits short or greater then id
+        if (err.kind == 'ObjectId') {
+            return res.status(400).json({ msg: "Profile not found (kind)" })
+        }
+        res.status(500).send("Server Error")
+    }
+})
 module.exports = router;
