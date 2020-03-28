@@ -197,9 +197,8 @@ router.put('/experience', [auth, [
         description
     } = req.body;
 
-    // creating an object (newExp) and put all the value in it.
     const newExp = {
-        title,  // this is the same as doing this title = title
+        title, 
         company,
         location,
         from,
@@ -209,17 +208,34 @@ router.put('/experience', [auth, [
     }
 
     try {
-        // lets create the veriable c/d profile because we have to first fetch the profile that we want to add the experience to.
         const profile = await Profile.findOne({ user: req.user.id })
-
-        // from profile going to the 'experience' array
-        // we used unshift instead push, we want to add new experience first
         profile.experience.unshift(newExp)
         await profile.save();
+        
         res.json(profile)
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error')
+    }
+})
+
+// @route    DELETE api/profile/experience/:exp_id
+// @desc     Delete experience from profile
+// @access   Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({ user: req.user.id })
+             
+        // Get remove index
+        const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
+       
+        // splice it out
+        profile.experience.splice(removeIndex, 1);
+        await profile.save();
+        res.json(profile);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send("Server Error")
     }
 })
 
