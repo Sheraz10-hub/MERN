@@ -159,7 +159,6 @@ router.delete('/', auth, async (req, res) => {
         // @todo -remove users posts
         
         // Remove profile
-        // we dont need to get anything so we dont the need a veriable here
         await Profile.findOneAndRemove({ user: req.user.id });
 
         // Remove user
@@ -169,6 +168,58 @@ router.delete('/', auth, async (req, res) => {
     } catch (err) {
         console.error(err.message)
         res.status(500).send("Server Error")
+    }
+})
+
+
+// @route    Put api/profile/experience
+// @desc     Add experience to profile
+// @access   Private
+
+router.put('/experience', [auth, [
+    check('title', 'Title is required').not().isEmpty(),
+    check('company', 'Company is required').not().isEmpty(),
+    check('from', '  From Date is required').not().isEmpty()
+    ]
+], async (req, res) => {
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    const {
+        title,
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    } = req.body;
+
+    // creating an object (newExp) and put all the value in it.
+    const newExp = {
+        title,  // this is the same as doing this title = title
+        company,
+        location,
+        from,
+        to,
+        current,
+        description
+    }
+
+    try {
+        // lets create the veriable c/d profile because we have to first fetch the profile that we want to add the experience to.
+        const profile = await Profile.findOne({ user: req.user.id })
+
+        // from profile going to the 'experience' array
+        // we used unshift instead push, we want to add new experience first
+        profile.experience.unshift(newExp)
+        await profile.save();
+        res.json(profile)
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error')
     }
 })
 
