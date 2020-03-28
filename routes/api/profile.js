@@ -117,8 +117,6 @@ router.post('/',
 
 router.get('/', async (req, res) => {
     try {
-        // we also want to add name and avatar which is the part of user model
-        // so we use dot populate 1st parameter: user collection, 2nd parameter: array of field that we want 
         const profiles = await Profile.find().populate('user', ['name','avatar']);
         res.send(profiles);
     } catch (err) {
@@ -128,28 +126,50 @@ router.get('/', async (req, res) => {
 })
 
 
-// @route    GET api/profile/user/:user_id     //   :user_id is the place holder
+// @route    GET api/profile/user/:user_id 
 // @desc     Get profile by user ID
 // @access   public
 
 router.get('/user/:user_id', async (req, res) => {
     try {
-        // params are parameters whose values are set dynamically
         const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
-       
         if(!profile) {
             return res.status(400).json({ msg: "Profile not found "})
         };
-
         res.json(profile);
+
     } catch (err) {
         console.error(err.message)
-        // in err kind is the property 
-        // when search for id but its digits short or greater then id
         if (err.kind == 'ObjectId') {
             return res.status(400).json({ msg: "Profile not found (kind)" })
         }
+
         res.status(500).send("Server Error")
     }
 })
+
+
+
+// @route    Delete api/profile
+// @desc     Delete profile, user and post
+// @access   Private
+
+router.delete('/', auth, async (req, res) => {
+    try {
+        // @todo -remove users posts
+        
+        // Remove profile
+        // we dont need to get anything so we dont the need a veriable here
+        await Profile.findOneAndRemove({ user: req.user.id });
+
+        // Remove user
+        await User.findOneAndRemove({ _id: req.user.id }) // user is not the field is 'user model'. so we user _id
+        res.json({ msg: 'User removed' });
+
+    } catch (err) {
+        console.error(err.message)
+        res.status(500).send("Server Error")
+    }
+})
+
 module.exports = router;
