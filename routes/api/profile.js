@@ -325,18 +325,13 @@ router.get('/github/:username', (req, res) => {
             headers: {'user-agent': 'node.js'}
         }
 
-        // request takes 2 parameter 
-        // 1: option object  2: callback 
         request(option, (error, response, body) => {
             if(error) console.error(error);
 
-            // is not successed, while username is wrong
             if(response.statusCode !== 200) {
                 res.status(404).json({ msg: "No Github profile found" })
             }
 
-            // this body is basically a regular string with the escaped quotes
-            // so we want to surround this with Jason dot parse
             res.json(JSON.parse(body))
         })
     } catch (err) {
