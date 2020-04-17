@@ -1,27 +1,28 @@
 import React, { Fragment, useState } from 'react'; // we use react hooks to change the state, its easy
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types'
 
-const Register = () => {
 
-    const [ formData, setFormData ]  = useState({   // formData getd all the value in the form
+const Register = ({ setAlert }) => {
+
+    const [ formData, setFormData ]  = useState({
         name: '',
         email: '',
         password: '',
         password2: ''
     });
 
-    const { name, email, password, password2 } = formData; // we destructor all value from formData
-
-    // ...formData: copy the form data we use spread operator (...) before it
-    // then we want to change the name to whats the input value is.
-    // first i use name: e.target.value. but i realize its the same for all data
-    // then i change it to [e.target.name]: e.target.value
+    const { name, email, password, password2 } = formData;
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value })
-
+    
     const onSubmit = e => {
         e.preventDefault();
         if(password !== password2) {
-            console.log('password do not match')
+            // calling function setAlert which is in action/alert.js
+            setAlert('password do not match', 'danger');
+
         } else {
             console.log(formData)
         }
@@ -83,4 +84,18 @@ const Register = () => {
     
 }
 
-export default Register
+Register.propTypes = {
+    alert: PropTypes.func.isRequired,
+}
+
+export default connect(
+    null,
+    { setAlert }
+    )(Register);
+
+// Now connect takes in two things, one is there any state you want to map.
+// So if you want to get state from alert or profile or anything else would put that as a first parameter. 
+// im going to put it null because i dont need anything right now.
+
+// second is an object with any actions, you want to use
+// in our case it is setAlert, now what this is going to do is it's going to allow us to access props dot set alert.
