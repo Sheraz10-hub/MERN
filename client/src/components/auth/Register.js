@@ -2,10 +2,11 @@ import React, { Fragment, useState } from 'react'; // we use react hooks to chan
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { setAlert } from '../../actions/alert';
+import { register } from '../../actions/auth'
 import PropTypes from 'prop-types'
 
 
-const Register = ({ setAlert }) => {
+const Register = ({ setAlert, register }) => {
 
     const [ formData, setFormData ]  = useState({
         name: '',
@@ -24,7 +25,7 @@ const Register = ({ setAlert }) => {
             setAlert('password do not match', 'danger');
 
         } else {
-            console.log(formData)
+            register({ name, email, password })
         }
     }
 
@@ -39,7 +40,7 @@ const Register = ({ setAlert }) => {
                 name="name" 
                 value={name} 
                 onChange = { e => onChange(e) }  // onChangeHandler: passing e as event and calling onChangehandler
-                required />
+                />
             </div>
             <div className="form-group">
                 <input 
@@ -47,7 +48,7 @@ const Register = ({ setAlert }) => {
                     placeholder="Email Address" 
                     name="email" value={email}
                     onChange={e => onChange(e)}
-                    required/>
+                   />
                 <small className="form-text"
                 >This site uses Gravatar so if you want a profile image, use a
             Gravatar email</small
@@ -61,7 +62,7 @@ const Register = ({ setAlert }) => {
                     minLength="6"
                     value={password}
                     onChange={e => onChange(e)}
-                    required
+                   
                 />
             </div>
             <div className="form-group">
@@ -72,7 +73,7 @@ const Register = ({ setAlert }) => {
                     minLength="6"
                     value={password2}
                     onChange={e => onChange(e)}
-                    required
+                    
                 />
             </div>
             <input type="submit" className="btn btn-primary" value="Register" />
@@ -90,12 +91,5 @@ Register.propTypes = {
 
 export default connect(
     null,
-    { setAlert }
+    { setAlert, register }
     )(Register);
-
-// Now connect takes in two things, one is there any state you want to map.
-// So if you want to get state from alert or profile or anything else would put that as a first parameter. 
-// im going to put it null because i dont need anything right now.
-
-// second is an object with any actions, you want to use
-// in our case it is setAlert, now what this is going to do is it's going to allow us to access props dot set alert.
