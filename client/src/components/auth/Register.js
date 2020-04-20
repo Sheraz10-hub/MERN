@@ -1,12 +1,12 @@
 import React, { Fragment, useState } from 'react'; // we use react hooks to change the state, its easy
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { setAlert } from '../../actions/alert';
-import { register } from '../../actions/auth'
-import PropTypes from 'prop-types'
+import { register } from '../../actions/auth';
+import PropTypes from 'prop-types';
 
 
-const Register = ({ setAlert, register }) => {
+const Register = ({ setAlert, register, isAuthenticated }) => {
 
     const [ formData, setFormData ]  = useState({
         name: '',
@@ -27,6 +27,11 @@ const Register = ({ setAlert, register }) => {
         } else {
             register({ name, email, password })
         }
+    }
+
+    // Redirect when registered
+    if (isAuthenticated) {
+        return <Redirect to="/dashboard" />
     }
 
     return <Fragment> 
@@ -86,10 +91,15 @@ const Register = ({ setAlert, register }) => {
 }
 
 Register.propTypes = {
-    alert: PropTypes.func.isRequired,
+    setAlert: PropTypes.func.isRequired,
+    register: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool,
 }
 
+const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+})
+
 export default connect(
-    null,
-    { setAlert, register }
+    mapStateToProps, { setAlert, register }
     )(Register);
