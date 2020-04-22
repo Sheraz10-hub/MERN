@@ -1,4 +1,8 @@
-import { GET_PROFILE, PROFILE_ERROR } from '../actions/types';
+import {
+    GET_PROFILE,
+    PROFILE_ERROR,
+    CLEAR_PROFILE
+} from '../actions/types';
 
 const initialstate = {
     profile: null, // singular profile (by default null)
@@ -8,7 +12,7 @@ const initialstate = {
     error: {}     // error object if any error in the request
 }
 
-export default function(state = initialstate, action) {
+export default function (state = initialstate, action) {
     const { type, payload } = action;
 
     switch (type) {
@@ -16,9 +20,9 @@ export default function(state = initialstate, action) {
             return {
                 ...state,  // current state
                 profile: payload, // payload is here current user
-                loading: false   
+                loading: false
             }
-        
+
         case PROFILE_ERROR:
             return {
                 ...state,
@@ -26,6 +30,14 @@ export default function(state = initialstate, action) {
                 loading: false
             }
 
+        case CLEAR_PROFILE:
+            return {
+                ...state,
+                profile: null,
+                repos: [],
+                loading: false
+            }
+            
         default:
             return state;
     }
