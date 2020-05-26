@@ -3,14 +3,19 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
-import { LOGOUT } from '../../actions/types';
+
 
 const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
 
     const authLinks = (
         <ul>
+             <li>
+                <Link to='/dashboard'>
+                <i className='fas fa-user'/>{' '}
+                <span className='hide-sm'>Dashboard</span></Link>
+            </li>
             <li>
-                <a onClick={logout} href='!#'>
+                <a onClick={logout} href='/login'>
                     <i className='fas fa-sign-out-alt' />{' '}
                     <span className="hide-sm">logout</span>
                 </a>
