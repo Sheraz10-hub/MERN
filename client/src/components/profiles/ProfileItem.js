@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom';
+
+// from profile destruct user, status company etc
 const ProfileItem = ({ profile: {
     user: { _id, name, avatar },
     status,

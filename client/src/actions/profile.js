@@ -28,7 +28,8 @@ export const getCurrentProfile = () => async dispatch => {
 
 // Get All profile
 export const getProfiles = () => async dispatch => {
-    // when they go to the profile list page i want to clear whatever's in the current profile 
+    // when they go to the profile list page i want to clear whatever's 
+    // in the current profile 
     dispatch({ type: CLEAR_PROFILE })
 
     try {
@@ -48,7 +49,9 @@ export const getProfiles = () => async dispatch => {
 // Get profile by ID
 export const getProfileById = userId => async dispatch => {
     try {
-        const res = await axios.get(`/api/profile/${userId}`)
+        console.log('run')
+        const res = await axios.get(`/api/profile/user/${userId}`)
+        console.log(res)
         dispatch({
             type: GET_PROFILE,
             payload: res.data
@@ -220,7 +223,7 @@ export const deleteEducation = id => async dispatch => {
 export const deleteAccount = () => async dispatch => {
     if (window.confirm('Are you sure? This can NOT be undone!')) {
         try {
-            const res = await axios.delete('/api/profile')
+            await axios.delete('/api/profile')
 
             dispatch({ type: CLEAR_PROFILE })
             dispatch({ type: ACCOUNT_DELETED })
