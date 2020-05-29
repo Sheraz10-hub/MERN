@@ -3,9 +3,11 @@ const request = require('request')
 const config = require('config')
 const router = express.Router();
 const auth = require('../../middleware/auth')
-const { check , validationResult } = require('express-validator')  // this is a post request so its takes data
+const { check, validationResult } = require('express-validator')  // this is a post request so its takes data
 const Profile = require('../../models/Profile')
 const User = require('../../models/User')
+const Post = require('../../models/Post')
+
 
 // @route    GET api/profile/me
 // @desc     Get current users profile
@@ -13,11 +15,13 @@ const User = require('../../models/User')
 router.get('/me', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id }).populate('user', ['name', 'avatar'])
-        if(!profile) {
-            return res.status(400).json({ msg: "there is no profile for this user"});
+        if (!profile) {
+            return res.status(400).json({ msg: "there is no profile for this user" });
         }
-    
-    } catch(err) {
+
+        res.send(profile)
+
+    } catch (err) {
         console.error(err.message)
         res.status(500).send('Server Error')
     }
@@ -38,7 +42,7 @@ router.post('/',
     ],
     async (req, res) => {
         const errors = validationResult(req);
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() })
         }
 
@@ -62,14 +66,14 @@ router.post('/',
 
         // getting req.user.id mean object id
         profileFields.user = req.user.id;
-        if(company) profileFields.company = company;
+        if (company) profileFields.company = company;
         if (website) profileFields.website = website;
         if (location) profileFields.location = location;
         if (bio) profileFields.bio = bio;
         if (status) profileFields.status = status;
         if (githubusername) profileFields.githubusername = githubusername;
         // when skills actually we need to turn that into an array
-        if(skills) {
+        if (skills) {
             // split: return string to array which takes a comma,
             // trim: remove space both ends
             profileFields.skills = skills.split(',').map(skill => skill.trim());
@@ -81,16 +85,16 @@ router.post('/',
         if (youtube) profileFields.social.youtube = youtube;
         if (twitter) profileFields.social.twitter = twitter;
         if (facebook) profileFields.social.facebook = facebook;
-        if (linkedin) profileFields.social.linkedin = linkedin;   
+        if (linkedin) profileFields.social.linkedin = linkedin;
         if (instagram) profileFields.social.instagram = instagram;
 
         // update and insert data
         try {
             // findOne in user model. with req.user.id (object id)
             let profile = await Profile.findOne({ user: req.user.id })
-        
+
             // if profile found update it
-            if(profile){
+            if (profile) {
                 // update
                 profile = await Profile.findOneAndUpdate( // 1st parameter: find, 2nd: update
                     { user: req.user.id },
@@ -101,7 +105,7 @@ router.post('/',
             }
             // if not found create it
             // create
-            profile = new Profile(profileFields) 
+            profile = new Profile(profileFields)
             await profile.save();
             res.json(profile);
 
@@ -119,7 +123,7 @@ router.post('/',
 
 router.get('/', async (req, res) => {
     try {
-        const profiles = await Profile.find().populate('user', ['name','avatar']);
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
         res.send(profiles);
     } catch (err) {
         console.error(err.message)
@@ -135,8 +139,8 @@ router.get('/', async (req, res) => {
 router.get('/user/:user_id', async (req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.params.user_id }).populate('user', ['name', 'avatar']);
-        if(!profile) {
-            return res.status(400).json({ msg: "Profile not found "})
+        if (!profile) {
+            return res.status(400).json({ msg: "Profile not found " })
         };
         res.json(profile);
 
@@ -158,8 +162,9 @@ router.get('/user/:user_id', async (req, res) => {
 
 router.delete('/', auth, async (req, res) => {
     try {
-        // @todo -remove users posts
-        
+        // Remove user posts
+        await Post.deleteMany({ user: req.user.id })
+
         // Remove profile
         await Profile.findOneAndRemove({ user: req.user.id });
 
@@ -182,10 +187,10 @@ router.put('/experience', [auth, [
     check('title', 'Title is required').not().isEmpty(),
     check('company', 'Company is required').not().isEmpty(),
     check('from', '  From Date is required').not().isEmpty()
-    ]
+]
 ], async (req, res) => {
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
     }
 
@@ -200,7 +205,7 @@ router.put('/experience', [auth, [
     } = req.body;
 
     const newExp = {
-        title, 
+        title,
         company,
         location,
         from,
@@ -213,7 +218,7 @@ router.put('/experience', [auth, [
         const profile = await Profile.findOne({ user: req.user.id })
         profile.experience.unshift(newExp)
         await profile.save();
-        
+
         res.json(profile)
     } catch (err) {
         console.error(err.message);
@@ -227,10 +232,10 @@ router.put('/experience', [auth, [
 router.delete('/experience/:exp_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({ user: req.user.id })
-             
+
         // Get remove index
         const removeIndex = profile.experience.map(item => item.id).indexOf(req.params.exp_id);
-       
+
         // splice it out
         profile.experience.splice(removeIndex, 1);
         await profile.save();
@@ -322,13 +327,13 @@ router.get('/github/:username', (req, res) => {
             sort=created:asc&client_id=${config.get('githubClientId')}&client_secret=$
             {config.get('githubSecret')}`,
             method: 'GET',
-            headers: {'user-agent': 'node.js'}
+            headers: { 'user-agent': 'node.js' }
         }
 
         request(option, (error, response, body) => {
-            if(error) console.error(error);
+            if (error) console.error(error);
 
-            if(response.statusCode !== 200) {
+            if (response.statusCode !== 200) {
                 res.status(404).json({ msg: "No Github profile found" })
             }
 
