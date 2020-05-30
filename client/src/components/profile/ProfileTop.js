@@ -31,7 +31,7 @@ const ProfileTop = ({
                 }
                 {
                     social && social.twitter && (
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href={social.twitter} target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-twitter fa-2x"></i>
                         </a>
                     )
@@ -39,14 +39,14 @@ const ProfileTop = ({
                 
                 {
                     social && social.facebook && (
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href={social.facebook} target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-facebook fa-2x"></i>
                         </a>
                     )
                 }
                 {
                     social && social.linkedin && (
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href={social.linkedin} target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-linkedin fa-2x"></i>
                         </a>
                     )
@@ -54,14 +54,14 @@ const ProfileTop = ({
                
                {
                    social && social.youtube && (
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href={social.youtube} target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-youtube fa-2x"></i>
                         </a>
                    )
                }
                 {
                     social && social.instragram && (
-                        <a href="#" target="_blank" rel="noopener noreferrer">
+                        <a href={social.instragram} target="_blank" rel="noopener noreferrer">
                             <i className="fab fa-instagram fa-2x"></i>
                         </a>
                     )
