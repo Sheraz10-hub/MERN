@@ -11,8 +11,7 @@ import {
 } from '../actions/types';
 
 const initalstate = {
-    // token that we get back we store it in local stroage
-    token: localStorage.getItem('token'), // look for item called token
+    token: localStorage.getItem('token'), 
     isAuthenticated: null,
     loading: true,
     user: null,
