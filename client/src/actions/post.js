@@ -56,7 +56,7 @@ export const removeLike = id => async dispatch => {
     } catch (err) {
         dispatch({
             type: POST_ERROR,
-            payload: { msg: err.reponse.statusText, status: err.reponse.status }
+            payload: { msg: err.response.statusText, status: err.response.status }
         })
     }
 }
